@@ -21,21 +21,3 @@ To open the development shell, run the following command
 ```
 make shell
 ```
-
-# Tecnical Specification
-
-### Docker images
-
-- {{AUTHOR}}/{{PROJECT}}-webdev
-- {{AUTHOR}}/{{PROJECT}}-sync
-
-
-### Docker containers
-
-Ephemeral:
-- {{PROJECT}}-webdev
-- {{PROJECT}}-sync
-
-Volumes:
-- {{PROJECT}}-src
-- {{PROJECT}}-mod
