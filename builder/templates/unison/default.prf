@@ -1,0 +1,6 @@
+# Roots of the synchronization
+root = /hostdir
+root = /home/devuser/src
+
+# Paths to synchronize 
+ignore = Path .git

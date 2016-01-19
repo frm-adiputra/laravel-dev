@@ -1,0 +1,6 @@
+src:
+  image: busybox
+  container_name: {{PROJECT}}-src
+  volumes:
+    - /home/devuser/src
+  command: chown -R {{UID}}:{{GID}} /home/devuser

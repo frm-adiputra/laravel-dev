@@ -1,0 +1,88 @@
+####################
+# USER CONFIG
+
+UID=1000
+GID=1000
+PROJECT=example
+
+# base path of docker image name
+IMGBASE=localdev
+
+# port that will be used for testing web server
+TESTING_PORT=8080
+
+# end of USER CONFIG
+####################
+
+export UID
+export GID
+export PROJECT
+export IMGBASE
+export TESTING_PORT
+
+
+ROOT=$(shell pwd)
+MO=$(ROOT)/builder/scripts/mo
+BUILD_DIR=$(ROOT)/.build
+TMPL_DIR=$(ROOT)/builder/templates
+
+export ROOT
+export BUILD_DIR
+
+start-services:
+	docker-compose -f $(BUILD_DIR)/docker/services.yml up --force-recreate
+
+shell:
+	docker run -it --rm \
+		--hostname="$(PROJECT)-shell" \
+		--volumes-from $(PROJECT)-src \
+		$(IMGBASE)/$(PROJECT)-shell bash
+
+#################
+# Preparation
+#################
+
+init: gen-config build-images create-volumes
+
+gen-config:
+	# generate sync builder
+	mkdir -p $(BUILD_DIR)/unison
+	$(MO) $(TMPL_DIR)/unison/default.prf > $(BUILD_DIR)/unison/default.prf
+	mkdir -p $(BUILD_DIR)/docker/sync
+	$(MO) $(TMPL_DIR)/docker/sync/Dockerfile > $(BUILD_DIR)/docker/sync/Dockerfile
+	# generate volumes builder
+	mkdir -p $(BUILD_DIR)/docker
+	$(MO) $(TMPL_DIR)/docker/services.yml > $(BUILD_DIR)/docker/services.yml
+	$(MO) $(TMPL_DIR)/docker/volumes.yml > $(BUILD_DIR)/docker/volumes.yml
+	# generate shell builder
+	mkdir -p $(BUILD_DIR)/docker/shell
+	$(MO) $(TMPL_DIR)/docker/shell/Dockerfile > $(BUILD_DIR)/docker/shell/Dockerfile
+	# generate init-laravel builder
+	mkdir -p $(BUILD_DIR)/docker/init-laravel
+	$(MO) $(TMPL_DIR)/docker/init-laravel/Dockerfile > $(BUILD_DIR)/docker/init-laravel/Dockerfile
+
+
+build-images:
+	cd $(BUILD_DIR)/docker/shell && docker build -t $(IMGBASE)/$(PROJECT)-shell .
+	cd $(BUILD_DIR)/docker/init-laravel && docker build -t $(IMGBASE)/$(PROJECT)-init-laravel .
+	cd $(BUILD_DIR)/docker/sync && docker build -t $(IMGBASE)/$(PROJECT)-sync .
+
+create-volumes:
+	docker-compose -f $(BUILD_DIR)/docker/volumes.yml --project-name $(PROJECT) up
+
+#################
+# Tools
+#################
+
+init-laravel:
+	docker run -it --rm \
+		--volumes-from $(PROJECT)-src \
+		$(IMGBASE)/$(PROJECT)-init-laravel
+
+delete-volumes:
+	docker rm $(PROJECT)-src
+
+clean-unison:
+	rm -rf $(BUILD_DIR)/unison
+	mkdir -p $(BUILD_DIR)/unison
+	$(MO) $(TMPL_DIR)/unison/default.prf > $(BUILD_DIR)/unison/default.prf
