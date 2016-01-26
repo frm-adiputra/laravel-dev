@@ -6,10 +6,10 @@ User Provided Configuration
 PROJECT={{PROJECT}}
 
 # base path for docker image name
-IMGBASE={{IMGBASE}}
+BASENAME={{BASENAME}}
 
 # port that will be used for development web server
-DEVPORT={{DEVPORT}}
+WEBPORT={{WEBPORT}}
 
 
 Builder Configuration

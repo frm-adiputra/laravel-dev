@@ -1,0 +1,13 @@
+web:
+  container_name: "${BASENAME}_${PROJECT}-web"
+  hostname: "${PROJECT}-web"
+
+db:
+  container_name: "${BASENAME}_${PROJECT}-db"
+  hostname: "${PROJECT}-db"
+
+db-admin:
+  container_name: "${BASENAME}_${PROJECT}-db-admin"
+
+db-volume:
+  container_name: "${BASENAME}_${PROJECT}-db-volume"

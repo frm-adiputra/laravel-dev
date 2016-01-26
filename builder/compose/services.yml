@@ -1,0 +1,23 @@
+web:
+  image: "${BASENAME}/${PROJECT}-web"
+  volumes:
+  - "${SRC_DIR}:/home/devuser/src"
+  ports:
+  - "${WEBPORT}:8080"
+  links:
+  - db:db
+  working_dir: "/home/devuser/src/${PROJECT}"
+
+db:
+  image: mariadb:10.1
+  volumes_from:
+  - db-volume
+  environment:
+    TERM: dumb
+
+db-admin:
+  image: nazarpc/phpmyadmin
+  links:
+  - db:mysql
+  ports:
+  - "${DBADMINPORT}:80"

@@ -20,7 +20,20 @@ RUN sed -i "s/User www-data/User devuser/" /etc/apache2/apache2.conf \
 RUN rm -rf /var/www/html \
  && ln -s /home/devuser/src/{{PROJECT}}/public /var/www/html
 
+# RUN docker-php-ext-configure mysql --with-mysql=mysqlnd \
+# && docker-php-ext-install \
+#  mysql
+#
+# Install PDO-MySQL PHP extension
+RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
+ && docker-php-ext-install \
+  pdo_mysql
+
+# RUN docker-php-ext-install pdo_mysql
+# RUN php -r "print_r(php_ini_loaded_file());" \
+#  && php -r "print_r(get_loaded_extensions());" \
+#  && ls -l /usr/local/lib/php/extensions/no-debug-non-zts-20131226/
+
 USER devuser
 RUN mkdir -p /home/devuser/lock/apache2
 ENV PATH="/home/devuser/.composer/vendor/bin:$PATH"
-WORKDIR /home/devuser/src/{{PROJECT}}

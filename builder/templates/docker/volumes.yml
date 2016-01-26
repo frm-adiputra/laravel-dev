@@ -1,6 +1,0 @@
-db-volume:
-  build: {{BUILD_DIR}}/docker/web
-  container_name: {{IMGBASE}}_{{PROJECT}}-db-volume
-  volumes:
-    - /var/lib/mysql
-  command: /bin/true
