@@ -1,3 +1,3 @@
-FROM {{IMGBASE}}/{{PROJECT}}-shell
+FROM {{IMGBASE}}/{{PROJECT}}-web
 
 CMD ["laravel", "new", "{{PROJECT}}"]

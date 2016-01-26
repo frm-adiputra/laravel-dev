@@ -1,17 +1,13 @@
-sync:
-  image: {{IMGBASE}}/{{PROJECT}}-sync
-  container_name: {{PROJECT}}-sync
-  volumes:
-  - {{BUILD_DIR}}/unison:/root/.unison
-  - {{ROOT}}/src:/hostdir
-  volumes_from:
-  - {{PROJECT}}-src
-  command: /sbin/my_init --skip-startup-files --quiet -- unison -repeat watch -owner -group -batch -terse -times
-
 web:
-  image: {{IMGBASE}}/{{PROJECT}}-shell
+  image: {{IMGBASE}}/{{PROJECT}}-web
   container_name: {{PROJECT}}-web
   volumes_from:
   - {{PROJECT}}-src
   ports:
-  - "{{TESTING_PORT}}:8080"
+  - "{{DEVPORT}}:8080"
+
+db:
+  image: mariadb:10.1
+  container_name: {{PROJECT}}-db
+  volumes_from:
+  - {{PROJECT}}-db-volume

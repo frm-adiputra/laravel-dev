@@ -1,6 +1,6 @@
-src:
-  image: busybox
-  container_name: {{PROJECT}}-src
+db-volume:
+  build: {{BUILD_DIR}}/docker/web
+  container_name: {{IMGBASE}}_{{PROJECT}}-db-volume
   volumes:
-    - /home/devuser/src
-  command: chown -R {{UID}}:{{GID}} /home/devuser
+    - /var/lib/mysql
+  command: /bin/true
