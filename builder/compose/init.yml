@@ -1,5 +1,6 @@
 init:
   image: "${BASENAME}/${PROJECT}-web"
+  container_name: "${BASENAME}_${PROJECT}-init"
   volumes:
   - "${SRC_DIR}:/home/devuser/src"
   working_dir: "/home/devuser/src"
