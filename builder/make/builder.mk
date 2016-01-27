@@ -64,14 +64,10 @@ GENERATED=$(addprefix $(BUILD_DIR)/, \
 	info.md \
 )
 
+# ordering is IMPORTANT!
 DOCKERFILES=$(addsuffix /Dockerfile,$(addprefix $(BUILD_DIR)/docker/, \
 	web \
 ))
-
-# ordering is IMPORTANT!
-DOCKER_IMAGES=$(addprefix $(BASENAME)/$(PROJECT)-, \
-	web \
-)
 
 BUILDER_FILES=\
 	Makefile \
@@ -156,77 +152,3 @@ clean:
 	@$(COMPOSE_SERVICES_CMD) rm -v --force $(SERVICES) $(VOLUMES)
 	$(call infoblue,removing dirs: $(BUILD_DIR))
 	@rm -rf $(BUILD_DIR)
-
-
-#################
-# Initialization
-#################
-
-# GENERATED=$(addprefix $(BUILD_DIR)/, \
-# 	docker/web/Dockerfile \
-# 	docker/init-laravel/Dockerfile \
-# 	docker/shell/Dockerfile \
-# 	docker/volumes.yml \
-# 	info.md \
-# )
-#
-# # ordering is IMPORTANT!
-# DOCKER_IMAGES=$(addprefix $(BASENAME)/$(PROJECT)-, \
-# 	web \
-# 	init-laravel \
-# 	shell \
-# )
-#
-# VOLUMES=$(addprefix $(PROJECT)-, \
-# 	db-volume \
-# )
-#
-# .PHONY: $(DOCKER_IMAGES)
-#
-# init: $(GENERATED) $(DOCKER_IMAGES) $(PROJECT_SRC)
-#
-# $(PROJECT_SRC):
-# 	$(call infoblue,generating project source code)
-# 	@-docker run -it --rm \
-# 		-v $(ROOT)/src:/home/devuser/src \
-# 		$(BASENAME)/$(PROJECT)-init-laravel
-#
-# $(GENERATED): $(BUILD_DIR)/%: $(TMPL_DIR)/%
-# 	$(call infoblue,generating $*)
-# 	@mkdir -p $(dir $@)
-# 	@$(MO) "$<" > "$@"
-#
-# $(DOCKER_IMAGES): $(BASENAME)/$(PROJECT)-%: $(BUILD_DIR)/docker/%
-# 	$(call infoblue,building docker image $@)
-# 	@docker build -t $@ $<
-#
-# #################
-# # Working tasks
-# #################
-#
-# shell:
-# 	@docker run -it --rm \
-# 		--hostname="$(PROJECT)-shell" \
-# 		-v $(ROOT)/src:/home/devuser/src \
-# 		-p $(WEBPORT):8080 \
-# 		$(BASENAME)/$(PROJECT)-shell
-#
-# web:
-# 	$(call infoblue,starting web server http://localhost:$(WEBPORT) $@)
-# 	@docker run -it --rm \
-# 		-v $(ROOT)/src:/home/devuser/src \
-# 		-p $(WEBPORT):8080 \
-# 		$(BASENAME)/$(PROJECT)-web
-#
-# ##################
-# # Additional tasks
-# ##################
-#
-# info:
-# 	@cat $(BUILD_DIR)/info.md
-#
-# remove-images:
-# 	@docker rmi $(DOCKER_IMAGES)
-#
-# create-volumes:
-# 	@docker-compose -f $(BUILD_DIR)/docker/volumes.yml up
