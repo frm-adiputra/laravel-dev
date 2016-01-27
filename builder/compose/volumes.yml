@@ -1,0 +1,5 @@
+db-volume:
+  image: busybox
+  volumes:
+    - /var/lib/mysql
+  command: /bin/true
