@@ -57,7 +57,8 @@ COMPOSE_FILES=$(addprefix $(COMPOSE_DIR)/, \
 	env-dev.yml \
 )
 
-COMPOSE_CMD=$(COMPOSE_BIN) $(addprefix -f , $(COMPOSE_FILES)) --project-name $(PROJECT)
+COMPOSE_CMD=$(COMPOSE_BIN) --project-name $(PROJECT)
+COMPOSE_SERVICES_CMD=$(COMPOSE_CMD) $(addprefix -f , $(COMPOSE_FILES))
 
 GENERATED=$(addprefix $(BUILD_DIR)/, \
 	info.md \
@@ -115,13 +116,14 @@ $(GENERATED): $(BUILD_DIR)/%: $(TMPL_DIR)/%
 
 $(PROJECT_SRC):
 	$(call infoblue,generating project source code)
-	@-$(COMPOSE_BIN) -f $(COMPOSE_DIR)/init.yml up
+	@$(COMPOSE_CMD) -f $(COMPOSE_DIR)/init.yml up --force-recreate
+	@-$(COMPOSE_CMD) -f $(COMPOSE_DIR)/init.yml rm -v --force
 
 prepare: $(COMPOSE_BIN) $(DOCKERFILES)
 
 start: prepare volumes $(PROJECT_SRC)
 	$(call infoblue,starting services: $(SERVICES))
-	@$(COMPOSE_CMD) up --force-recreate $(SERVICES)
+	@$(COMPOSE_SERVICES_CMD) up --force-recreate $(SERVICES)
 
 info:
 	$(call infoblue,INFO)
@@ -142,16 +144,16 @@ mysql-shell:
 
 volumes:
 	$(call infoblue,starting volume containers: $(VOLUMES))
-	@$(COMPOSE_CMD) up $(VOLUMES)
+	@$(COMPOSE_SERVICES_CMD) up $(VOLUMES)
 
 rm-volumes:
-	@$(COMPOSE_CMD) rm -v --force $(VOLUMES)
+	@$(COMPOSE_SERVICES_CMD) rm -v --force $(VOLUMES)
 
 clean:
 	$(call infoblue,stopping containers: $(SERVICES) $(VOLUMES))
-	@$(COMPOSE_CMD) stop $(SERVICES) $(VOLUMES)
+	@$(COMPOSE_SERVICES_CMD) stop $(SERVICES) $(VOLUMES)
 	$(call infoblue,removing containers: $(SERVICES) $(VOLUMES))
-	@$(COMPOSE_CMD) rm -v --force $(SERVICES) $(VOLUMES)
+	@$(COMPOSE_SERVICES_CMD) rm -v --force $(SERVICES) $(VOLUMES)
 	$(call infoblue,removing dirs: $(BUILD_DIR))
 	@rm -rf $(BUILD_DIR)
 
