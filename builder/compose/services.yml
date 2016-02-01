@@ -9,14 +9,14 @@ web:
   working_dir: "/home/devuser/src/${PROJECT}"
 
 db:
-  image: mariadb:10.1
+  image: ${DB_IMAGE}
   volumes_from:
   - db-volume
   environment:
     TERM: dumb
 
 db-admin:
-  image: nazarpc/phpmyadmin
+  image: ${DB_ADMIN_IMAGE}
   links:
   - db:mysql
   ports:

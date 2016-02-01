@@ -22,6 +22,17 @@ TMPL_DIR=$(ROOT)/builder/templates
 SRC_DIR=$(ROOT)/src
 PROJECT_SRC=src/$(PROJECT)
 
+DB_IMAGE=mariadb:10.1
+DB_ADMIN_IMAGE=nazarpc/phpmyadmin
+VOLUME_IMAGE=busybox
+COMPOSER_IMAGE=frma/baseimage-composer
+
+IMAGES=\
+	$(DB_IMAGE) \
+	$(DB_ADMIN_IMAGE) \
+	$(VOLUME_IMAGE) \
+	$(COMPOSER_IMAGE)
+
 export UID
 export GID
 export PROJECT
@@ -34,6 +45,10 @@ export SRC_DIR
 export MYSQL_DATABASE
 export MYSQL_USER
 export MYSQL_PASSWORD
+export DB_IMAGE
+export DB_ADMIN_IMAGE
+export VOLUME_IMAGE
+export COMPOSER_IMAGE
 
 SERVICES=\
 	db \
@@ -42,6 +57,8 @@ SERVICES=\
 
 VOLUMES=\
 	db-volume
+
+PULL_IMAGES:=$(subst :,..,$(IMAGES))
 
 COMPOSE_VERSION=1.5.2
 COMPOSE_CURL=curl -L https://github.com/docker/compose/releases/download/$(COMPOSE_VERSION)/docker-compose-`uname -s`-`uname -m`
@@ -88,11 +105,16 @@ BUILDER_FILES=\
 	mysql-shell \
 	volumes \
 	rm-volumes \
-	clean
+	clean \
+	$(PULL_IMAGES)
 
 $(COMPOSE_BIN):
 	$(COMPOSE_CURL) > "$@"
 	chmod +x $@
+
+$(PULL_IMAGES):
+	$(call infoblue,pulling $(subst ..,:,$@))
+	@docker pull $(subst ..,:,$@)
 
 $(DOCKERFILES): $(BUILDER_FILES) $(GENERATED)
 
@@ -144,6 +166,8 @@ volumes:
 
 rm-volumes:
 	@$(COMPOSE_SERVICES_CMD) rm -v --force $(VOLUMES)
+
+update-images: $(PULL_IMAGES)
 
 clean:
 	$(call infoblue,stopping containers: $(SERVICES) $(VOLUMES))
