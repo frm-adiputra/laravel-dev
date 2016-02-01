@@ -1,4 +1,4 @@
-FROM frma/baseimage-composer
+FROM {{COMPOSER_IMAGE}}
 
 # create user
 RUN groupadd --gid {{GID}} -r devuser \
@@ -29,10 +29,8 @@ RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd \
  && docker-php-ext-install \
   pdo_mysql
 
-# RUN docker-php-ext-install pdo_mysql
-# RUN php -r "print_r(php_ini_loaded_file());" \
-#  && php -r "print_r(get_loaded_extensions());" \
-#  && ls -l /usr/local/lib/php/extensions/no-debug-non-zts-20131226/
+# Enable required apache modules
+RUN a2enmod rewrite
 
 USER devuser
 RUN mkdir -p /home/devuser/lock/apache2
