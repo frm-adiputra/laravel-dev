@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# $1 variable name
+# $2 message if variable is empty or unset
+function check_variable {
+  if [ -z "${!1}" ]; then
+    echo "$2: $1"
+    exit 1
+  fi
+}
+
 root=$(pwd)
 BUILDDIR=.ninja-build
 PATH=${root}/${builddir}/bin:${root}/builder/bin:${PATH}
@@ -11,6 +20,14 @@ PATH=${root}/${builddir}/bin:${root}/builder/bin:${PATH}
 . ./builder/build-env
 
 # User config
+
+check_variable PROJECT "project name not set"
+check_variable BASENAME "base path for docker image name not set"
+check_variable WEBPORT "port for application web server not set"
+check_variable DBADMINPORT "port for phpmyadmin web server not set"
+check_variable MYSQL_DATABASE "MariaDB database not set"
+check_variable MYSQL_USER "MariaDB username not set"
+check_variable MYSQL_PASSWORD "MariaDB password not set"
 
 export PROJECT
 export BASENAME
@@ -46,8 +63,4 @@ if [ ! -f ${ninja_build} ]; then
   python configure.py
 fi
 
-# NINJA_STATUS="[%s/%t] "
-
 ninja -C ${root} -j 1 $@
-# ninja -h
-# echo ${_UID}
