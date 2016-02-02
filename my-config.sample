@@ -1,0 +1,16 @@
+# project name (no space allowed)
+PROJECT=laravel-example
+
+# base path for docker image name
+BASENAME=localdev
+
+# port that will be used for the application web server
+WEBPORT=7000
+
+# port that will be used for phpmyadmin web server
+DBADMINPORT=7001
+
+# MariaDB configuration
+MYSQL_DATABASE=mydb
+MYSQL_USER=devuser
+MYSQL_PASSWORD=secret

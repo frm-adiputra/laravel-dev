@@ -1,3 +1,7 @@
 .build/
+.ninja-build/
 src/
 Makefile
+*.pyc
+build.ninja
+my-config

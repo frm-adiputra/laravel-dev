@@ -1,0 +1,3 @@
+_UID=$(stat -c "%u" src)
+_GID=$(stat -c "%g" src)
+MYSQL_ROOT_PASSWORD=mysecret

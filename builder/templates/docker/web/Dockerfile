@@ -1,8 +1,8 @@
 FROM {{COMPOSER_IMAGE}}
 
 # create user
-RUN groupadd --gid {{GID}} -r devuser \
- && useradd --uid {{UID}} --create-home --home /home/devuser --system --gid devuser devuser \
+RUN groupadd --gid {{_GID}} -r devuser \
+ && useradd --uid {{_UID}} --create-home --home /home/devuser --system --gid devuser devuser \
  && usermod -aG www-data devuser
 
 # install laravel installer

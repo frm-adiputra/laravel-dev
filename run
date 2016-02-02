@@ -1,0 +1,53 @@
+#!/bin/bash
+
+root=$(pwd)
+BUILDDIR=.ninja-build
+PATH=${root}/${builddir}/bin:${root}/builder/bin:${PATH}
+
+
+# load env vars
+
+. my-config
+. ./builder/build-env
+
+# User config
+
+export PROJECT
+export BASENAME
+export WEBPORT
+export DBADMINPORT
+export MYSQL_DATABASE
+export MYSQL_USER
+export MYSQL_PASSWORD
+export MYSQL_ROOT_PASSWORD
+
+# Builder config
+
+SRC_DIR=${root}/src
+
+export _UID
+export _GID
+export SRC_DIR
+export BUILDDIR
+
+DB_IMAGE=mariadb:10.1
+DB_ADMIN_IMAGE=nazarpc/phpmyadmin
+VOLUME_IMAGE=busybox
+COMPOSER_IMAGE=frma/baseimage-composer
+
+export DB_IMAGE
+export DB_ADMIN_IMAGE
+export VOLUME_IMAGE
+export COMPOSER_IMAGE
+
+ninja_build=build.ninja
+
+if [ ! -f ${ninja_build} ]; then
+  python configure.py
+fi
+
+# NINJA_STATUS="[%s/%t] "
+
+ninja -C ${root} -j 1 $@
+# ninja -h
+# echo ${_UID}

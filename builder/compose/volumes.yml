@@ -1,5 +1,5 @@
 db-volume:
-  image: ${VOLUME_IMAGE}
+  image: ${DB_IMAGE}
   volumes:
     - /var/lib/mysql
   command: /bin/true
